@@ -7,6 +7,10 @@ VpnCloud is a high performance peer-to-peer mesh VPN over UDP supporting strong 
 bash <(curl -Ls --ipv4 https://github.com/Musixal/VPNCloud/raw/main/vpncloud.sh)
 ```
 
+
+```
+bash <(curl -Ls --ipv4 https://github.com/Musixal/VPNCloud/raw/main/gost_vpncloud.sh)
+```
 # My Telegram channel
 
 https://t.me/Gozar_Xray
