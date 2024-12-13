@@ -6,9 +6,9 @@ if [ -z "$LOCAL_IP" ]; then
 fi
 
 # Prompt for encryption password
-read -p "Enter the encryption password (default: 1qaz2wsx66): " ENC_PASSWORD
+read -p "Enter the encryption password (default: 123456): " ENC_PASSWORD
 if [ -z "$ENC_PASSWORD" ]; then
-    ENC_PASSWORD="1qaz2wsx66"
+    ENC_PASSWORD="123456"
 fi
 
 # Update package lists and install required packages
