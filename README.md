@@ -9,7 +9,7 @@ bash <(curl -Ls --ipv4 https://github.com/Musixal/VPNCloud/raw/main/vpncloud.sh)
 
 
 ```
-bash <(curl -Ls --ipv4 https://github.com/Musixal/VPNCloud/raw/main/gost_vpncloud.sh)
+bash <(curl -Ls --ipv4 https://github.com/ApadanaDeveloper/VPNCloud/raw/main/gost_vpncloud.sh)
 ```
 # My Telegram channel
 
