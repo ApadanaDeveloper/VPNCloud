@@ -1,3 +1,4 @@
+
 # Prompt for local IP
 read -p "Enter the local IP (default: 10.144.144.1): " LOCAL_IP
 if [ -z "$LOCAL_IP" ]; then
