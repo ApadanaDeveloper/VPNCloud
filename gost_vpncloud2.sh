@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-# Prompt for local IP address
+# Prompt for local IP
 read -p "Enter the local IP (default: 10.144.144.1): " LOCAL_IP
 if [ -z "$LOCAL_IP" ]; then
     LOCAL_IP="10.144.144.1"
@@ -10,35 +8,6 @@ fi
 read -p "Enter the encryption password (default: 123456): " ENC_PASSWORD
 if [ -z "$ENC_PASSWORD" ]; then
     ENC_PASSWORD="123456"
-fi
-
-# Ask user if they want to add custom GOST lines or use default
-echo "Would you like to add custom GOST lines or use default?"
-echo "Type 'custom' to enter your lines, 'default' to use pre-configured lines."
-read -p "(default/custom): " GOST_MODE
-GOST_LINES=()
-
-if [[ "$GOST_MODE" == "custom" ]]; then
-    echo "Enter your GOST lines (e.g., -L=tcp://:2052/10.144.144.2:2052). Type 'done' when finished:"
-    while true; do
-        read -p "GOST line: " LINE
-        if [[ "$LINE" == "done" ]]; then
-            break
-        elif [[ "$LINE" =~ ^-L=.* ]]; then
-            GOST_LINES+=("$LINE")
-        else
-            echo "Invalid line format. Please try again."
-        fi
-    done
-else
-    # Default GOST lines
-    GOST_LINES=(
-        "-L=tcp://:2095/10.144.144.104:2095"
-        "-L=tcp://:2096/10.144.144.101:2095"
-        "-L=tcp://:2097/10.144.144.103:2095"
-        "-L=tcp://:2098/10.144.144.102:2095"
-        "-L=tcp://:2052/10.144.144.101:2052"
-    )
 fi
 
 # Update package lists and install required packages
@@ -53,14 +22,8 @@ gunzip gost-linux-amd64-2.11.5.gz
 sudo mv gost-linux-amd64-2.11.5 /usr/local/bin/gost
 sudo chmod +x /usr/local/bin/gost
 
-# Generate GOST configuration for the service
-GOST_EXEC=""
-for LINE in "${GOST_LINES[@]}"; do
-    GOST_EXEC="$GOST_EXEC $LINE"
-done
-
 # Create systemd service file
-sudo bash -c "cat > /usr/lib/systemd/system/gost.service <<EOF
+sudo bash -c 'cat > /usr/lib/systemd/system/gost.service <<EOF
 [Unit]
 Description=GO Simple Tunnel
 After=network.target
@@ -68,10 +31,16 @@ Wants=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/gost $GOST_EXEC
+ExecStart=/usr/local/bin/gost \
+-L=tcp://:2095/10.144.144.104:2095 \
+-L=tcp://:2096/10.144.144.101:2095  \
+-L=tcp://:2097/10.144.144.103:2095  \
+-L=tcp://:2098/10.144.144.102:2095  \
+-L=tcp://:2052/10.144.144.101:2052
+
 [Install]
 WantedBy=multi-user.target
-EOF"
+EOF'
 
 # Reload systemd units
 sudo systemctl daemon-reload
@@ -108,14 +77,7 @@ rm -f "$TMP_DEB"
 # Ensure configuration directory exists
 mkdir -p "$CONFIG_DIR"
 
-# Prompt for a single peer IP address
-read -p "Enter the peer IP address: " PEER_IP
-while [[ ! "$PEER_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; do
-    echo "Invalid IP address. Please try again."
-    read -p "Enter the peer IP address: " PEER_IP
-done
-
-# Create the configuration file using the user-provided LOCAL_IP, ENC_PASSWORD, and PEER_IP
+# Create the configuration file using the user-provided LOCAL_IP and ENC_PASSWORD
 cat > "$CONFIG_FILE" <<EOF
 device:
   type: tap
@@ -135,7 +97,7 @@ crypto:
     - PLAIN
 listen: "3210"
 peers:
-  - "$PEER_IP"
+  - "65.109.202.18"
 peer-timeout: 300
 keepalive: ~
 beacon:
